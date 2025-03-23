@@ -56,14 +56,19 @@
         // Shibarium Network Details
         const networkDetails = {
             name: "Shibarium",
-            rpcUrl: "https://www.shibrpc.com",
+            rpcUrls: [
+                "https://www.shibrpc.com",
+                "https://rpc.shibrpc.com" // Fallback RPC
+            ],
             chainId: 109,
             currencySymbol: "BONE",
             blockExplorer: "https://www.shibariumscan.io"
         };
 
         // Contract Details
-        const contractAddress = "0xb0Ea6B6aAB210d6eeCd248E2E9274aeD01037437b";
+        const rawContractAddress = "0xb0Ea6B6aAB210d6eeCd248E2E9274aeD01037437b";
+        let contractAddress;
+
         const contractAbi = [
             {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
             {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},
@@ -109,23 +114,45 @@
                     throw new Error("Web3.js library failed to load. Please ensure the script is loaded correctly.");
                 }
 
-                // Initialize Web3 with Shibarium RPC
-                web3 = new Web3(networkDetails.rpcUrl);
+                // Validate and checksum the contract address
+                try {
+                    contractAddress = Web3.utils.toChecksumAddress(rawContractAddress);
+                } catch (error) {
+                    throw new Error(`Invalid contract address: ${rawContractAddress}. ${error.message}`);
+                }
 
-                // Test RPC connection by fetching the chain ID
-                const chainId = await web3.eth.getChainId();
-                if (chainId !== networkDetails.chainId) {
-                    throw new Error(`RPC is not connected to Shibarium (Chain ID ${networkDetails.chainId}). Got Chain ID: ${chainId}`);
+                // Try each RPC URL until one works
+                let rpcUrl;
+                for (let i = 0; i < networkDetails.rpcUrls.length; i++) {
+                    rpcUrl = networkDetails.rpcUrls[i];
+                    try {
+                        web3 = new Web3(rpcUrl);
+                        const chainId = await web3.eth.getChainId();
+                        if (chainId === networkDetails.chainId) {
+                            break; // Success, use this RPC
+                        } else {
+                            throw new Error(`RPC ${rpcUrl} is not connected to Shibarium (Chain ID ${networkDetails.chainId}). Got Chain ID: ${chainId}`);
+                        }
+                    } catch (error) {
+                        if (i === networkDetails.rpcUrls.length - 1) {
+                            throw new Error(`All RPCs failed. Last error: ${error.message}`);
+                        }
+                        continue; // Try the next RPC
+                    }
                 }
 
                 // Initialize the contract
                 contract = new web3.eth.Contract(contractAbi, contractAddress);
 
                 // Test if the contract is accessible by calling a simple method
-                await contract.methods.name().call();
+                const contractName = await contract.methods.name().call();
+                if (contractName !== "Cheese") {
+                    throw new Error(`Contract at ${contractAddress} does not match expected name "Cheese". Got: ${contractName}`);
+                }
+
                 return true;
             } catch (error) {
-                document.getElementById("result").innerText = `Initialization Failed: ${error.message}\nPlease check the RPC URL (${networkDetails.rpcUrl}) and contract address (${contractAddress}).`;
+                document.getElementById("result").innerText = `Initialization Failed: ${error.message}\nPlease verify the contract address and RPC URLs:\n${networkDetails.rpcUrls.join("\n")}`;
                 return false;
             }
         }
