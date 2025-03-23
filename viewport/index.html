@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheeseToken Query Tool</title>
+    <title>CheeseToken Query Tool - Shibarium</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,7 +45,7 @@
 <body>
     <div class="container">
         <h2>CheeseToken Query Tool (Shibarium)</h2>
-        <p>Enter a wallet address to query related information:</p>
+        <p>Enter a wallet address to query CheeseToken details on Shibarium:</p>
         <input type="text" id="walletAddress" placeholder="Enter wallet address, e.g., 0x...">
         <button onclick="queryWallet()">Query</button>
         <div id="result"></div>
@@ -53,10 +53,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     <script>
-        const rpcUrl = "https://www.shibrpc.com";
-        const contractAddress = "0xb0Ea6B6aAB210d6eeCd248E2E9274aeD01037437b";
-        const web3 = new Web3(rpcUrl);
+        // Shibarium Network Details
+        const networkDetails = {
+            name: "Shibarium",
+            rpcUrl: "https://www.shibrpc.com",
+            chainId: 109,
+            currencySymbol: "BONE",
+            blockExplorer: "https://www.shibariumscan.io"
+        };
 
+        // Contract Details
+        const contractAddress = "0xb0Ea6B6aAB210d6eeCd248E2E9274aeD01037437b";
         const contractAbi = [
             {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
             {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},
@@ -92,7 +99,16 @@
             {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"whitelist","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
         ];
 
-        const contract = new web3.eth.Contract(contractAbi, contractAddress);
+        // Initialize Web3 and Contract
+        let web3;
+        let contract;
+        try {
+            web3 = new Web3(networkDetails.rpcUrl);
+            contract = new web3.eth.Contract(contractAbi, contractAddress);
+        } catch (error) {
+            document.getElementById("result").innerText = `Failed to initialize Web3 or contract: ${error.message}`;
+            throw error; // Stop execution if initialization fails
+        }
 
         async function queryWallet() {
             const address = document.getElementById("walletAddress").value.trim();
@@ -136,6 +152,12 @@
                 const totalSupplyEther = web3.utils.fromWei(totalSupply, "ether");
                 const lastCatchTime = lastCatch > 0 ? new Date(lastCatch * 1000).toLocaleString() : "Never caught";
                 const resultText = `
+Network: ${networkDetails.name}
+Chain ID: ${networkDetails.chainId}
+Currency: ${networkDetails.currencySymbol}
+Block Explorer: ${networkDetails.blockExplorer}
+Contract Address: ${contractAddress}
+
 Basic Information:
 - Wallet Address: ${address}
 - CHEESE Balance: ${balanceEther} CHEESE
