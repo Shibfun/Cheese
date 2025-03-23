@@ -4,50 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheeseToken Query Tool - Shibarium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Comic Neue', cursive;
+            margin: 0;
+            padding: 20px;
+            background: url('https://www.transparenttextures.com/patterns/cheese.png') repeat, linear-gradient(135deg, #FFF8E1 0%, #FFCA28 100%);
+            color: #4A2C00;
+            min-height: 100vh;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        input[type="text"] {
-            width: 70%;
-            padding: 8px;
-            margin-right: 10px;
-        }
-        button {
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #result {
-            margin-top: 20px;
-            white-space: pre-wrap;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 3px solid #FF9800;
         }
         h2 {
-            color: #333;
+            color: #FF9800;
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #4A2C00;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #FFCA28;
+            border-radius: 8px;
+            background: #FFF8E1;
+            color: #4A2C00;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            background: #FF9800;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background: #F57C00;
+            transform: scale(1.05);
+        }
+        button:disabled {
+            background: #B0BEC5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #result {
+            background: #FFF8E1;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed #FFCA28;
+            font-size: 1em;
+            line-height: 1.6;
+            color: #4A2C00;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #FF9800;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #FFCA28;
+            padding-bottom: 5px;
+        }
+        .section p, .section ul {
+            margin: 5px 0;
+        }
+        .section ul {
+            padding-left: 20px;
+        }
+        .section ul li {
+            margin-bottom: 8px;
+        }
+        .error {
+            color: #D32F2F;
+            font-weight: bold;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            p {
+                font-size: 1em;
+            }
+            input[type="text"] {
+                min-width: 100%;
+                font-size: 0.9em;
+            }
+            button {
+                width: 100%;
+                font-size: 0.9em;
+            }
+            #result {
+                font-size: 0.9em;
+                padding: 15px;
+            }
+            .section h3 {
+                font-size: 1.2em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>CheeseToken Query Tool (Shibarium)</h2>
+        <h2>🧀 CheeseToken Query Tool (Shibarium) 🧀</h2>
         <p>Enter a wallet address to query CheeseToken details on Shibarium:</p>
-        <input type="text" id="walletAddress" placeholder="Enter wallet address, e.g., 0x...">
-        <button onclick="queryWallet()">Query</button>
+        <div class="input-group">
+            <input type="text" id="walletAddress" placeholder="Enter wallet address, e.g., 0x...">
+            <button onclick="queryWallet()">Query</button>
+        </div>
         <div id="result"></div>
     </div>
 
@@ -60,7 +160,7 @@
                 "https://www.shibrpc.com",
                 "https://rpc.shibrpc.com",
                 "https://shibarium-rpc.publicnode.com",
-                "https://rpc.shibariumchain.com" // Additional fallback RPC
+                "https://rpc.shibariumchain.com"
             ],
             chainId: 109,
             currencySymbol: "BONE",
@@ -154,7 +254,7 @@
 
                 return true;
             } catch (error) {
-                document.getElementById("result").innerText = `Initialization Failed: ${error.message}\nPlease verify the contract address and RPC URLs:\n${networkDetails.rpcUrls.join("\n")}\nCheck the contract on Shibarium Scan: ${networkDetails.blockExplorer}/address/${contractAddress}`;
+                document.getElementById("result").innerHTML = `<div class="error">Initialization Failed: ${error.message}</div><p>Please verify the contract address and RPC URLs:<br>${networkDetails.rpcUrls.join("<br>")}<br>Check the contract on Shibarium Scan: <a href="${networkDetails.blockExplorer}/address/${contractAddress}" target="_blank">${contractAddress}</a></p>`;
                 return false;
             }
         }
@@ -170,17 +270,17 @@
         async function queryWallet() {
             const address = document.getElementById("walletAddress").value.trim();
             if (!web3.utils.isAddress(address)) {
-                document.getElementById("result").innerText = "Please enter a valid wallet address!";
+                document.getElementById("result").innerHTML = '<div class="error">Please enter a valid wallet address!</div>';
                 return;
             }
 
             // Double-check if contract is initialized
             if (!contract || !contract.methods) {
-                document.getElementById("result").innerText = "Contract is not initialized. Please check the initialization error above.";
+                document.getElementById("result").innerHTML = '<div class="error">Contract is not initialized. Please check the initialization error above.</div>';
                 return;
             }
 
-            document.getElementById("result").innerText = "Querying, please wait...";
+            document.getElementById("result").innerHTML = '<p>Querying, please wait...</p>';
 
             try {
                 // Query all public information
@@ -194,51 +294,62 @@
                 const totalSupply = await contract.methods.totalSupply().call();
 
                 // Query catch records (pagination, 10 per page)
-                let catchRecordsText = "Catch Records:\n";
+                let catchRecordsHtml = '';
                 if (catchRecordsCount > 0) {
                     const pageSize = 10;
                     const records = await contract.methods.getCatchRecords(address, 0, pageSize).call();
+                    catchRecordsHtml = '<ul>';
                     records.forEach((record, index) => {
                         const amountEther = web3.utils.fromWei(record.amount, "ether");
                         const time = new Date(record.timestamp * 1000).toLocaleString();
-                        catchRecordsText += `  ${index + 1}. Caught by ${record.catcher}, Amount: ${amountEther} CHEESE, Time: ${time}\n`;
+                        catchRecordsHtml += `<li>${index + 1}. Caught by ${record.catcher}, Amount: ${amountEther} CHEESE, Time: ${time}</li>`;
                     });
+                    catchRecordsHtml += '</ul>';
                     if (catchRecordsCount > pageSize) {
-                        catchRecordsText += `  (Total ${catchRecordsCount} records, showing first ${pageSize} only)\n`;
+                        catchRecordsHtml += `<p>(Total ${catchRecordsCount} records, showing first ${pageSize} only)</p>`;
                     }
                 } else {
-                    catchRecordsText += "  No catch records\n";
+                    catchRecordsHtml = '<p>No catch records</p>';
                 }
 
                 // Format the result
                 const balanceEther = web3.utils.fromWei(balance, "ether");
                 const totalSupplyEther = web3.utils.fromWei(totalSupply, "ether");
                 const lastCatchTime = lastCatch > 0 ? new Date(lastCatch * 1000).toLocaleString() : "Never caught";
-                const resultText = `
-Network: ${networkDetails.name}
-Chain ID: ${networkDetails.chainId}
-Currency: ${networkDetails.currencySymbol}
-Block Explorer: ${networkDetails.blockExplorer}
-Contract Address: ${contractAddress}
-Active RPC: ${activeRpcUrl}
-
-Basic Information:
-- Wallet Address: ${address}
-- CHEESE Balance: ${balanceEther} CHEESE
-- Role: ${role}
-- Whitelisted: ${isWhitelisted ? "Yes" : "No"}
-- Last Catch Time: ${lastCatchTime}
-- Total Catch Records: ${catchRecordsCount}
-${catchRecordsText}
-Contract Status:
-- Game Active: ${isGameActive ? "Yes" : "No"}
-- Contract Owner: ${owner}
-- Total Supply: ${totalSupplyEther} CHEESE
+                const resultHtml = `
+                    <div class="section">
+                        <h3>Network Information</h3>
+                        <p><strong>Network:</strong> ${networkDetails.name}</p>
+                        <p><strong>Chain ID:</strong> ${networkDetails.chainId}</p>
+                        <p><strong>Currency:</strong> ${networkDetails.currencySymbol}</p>
+                        <p><strong>Block Explorer:</strong> <a href="${networkDetails.blockExplorer}" target="_blank">${networkDetails.blockExplorer}</a></p>
+                        <p><strong>Contract Address:</strong> <a href="${networkDetails.blockExplorer}/address/${contractAddress}" target="_blank">${contractAddress}</a></p>
+                        <p><strong>Active RPC:</strong> ${activeRpcUrl}</p>
+                    </div>
+                    <div class="section">
+                        <h3>Wallet Information</h3>
+                        <p><strong>Wallet Address:</strong> ${address}</p>
+                        <p><strong>CHEESE Balance:</strong> ${balanceEther} CHEESE</p>
+                        <p><strong>Role:</strong> ${role}</p>
+                        <p><strong>Whitelisted:</strong> ${isWhitelisted ? "Yes" : "No"}</p>
+                        <p><strong>Last Catch Time:</strong> ${lastCatchTime}</p>
+                        <p><strong>Total Catch Records:</strong> ${catchRecordsCount}</p>
+                    </div>
+                    <div class="section">
+                        <h3>Catch Records</h3>
+                        ${catchRecordsHtml}
+                    </div>
+                    <div class="section">
+                        <h3>Contract Status</h3>
+                        <p><strong>Game Active:</strong> ${isGameActive ? "Yes" : "No"}</p>
+                        <p><strong>Contract Owner:</strong> ${owner}</p>
+                        <p><strong>Total Supply:</strong> ${totalSupplyEther} CHEESE</p>
+                    </div>
                 `;
 
-                document.getElementById("result").innerText = resultText;
+                document.getElementById("result").innerHTML = resultHtml;
             } catch (error) {
-                document.getElementById("result").innerText = `Query Failed: ${error.message}\nPlease ensure the contract is deployed and the RPC is accessible.`;
+                document.getElementById("result").innerHTML = `<div class="error">Query Failed: ${error.message}</div><p>Please ensure the contract is deployed and the RPC is accessible.</p>`;
             }
         }
     </script>
