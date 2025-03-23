@@ -3,328 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheeseToken Whitepaper - Shibarium</title>
+    <title>CheeseToken - Catch the Fun on Shibarium!</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background-color: #fff5e6;
             color: #333;
-            line-height: 1.6;
+            line-height: 1.7;
         }
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-        }
-        nav {
-            background: #ff8c00;
-            padding: 10px 0;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-        nav a:hover {
-            text-decoration: underline;
         }
         header {
             background: linear-gradient(90deg, #ff8c00, #ffbf00);
             color: white;
             text-align: center;
-            padding: 60px 20px;
-            border-radius: 0 0 25px 25px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            padding: 50px 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
         }
         header h1 {
             margin: 0;
-            font-size: 3em;
+            font-size: 2.5em;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
         }
         header p {
-            font-size: 1.4em;
-            margin: 15px 0 0;
-            opacity: 0.9;
+            font-size: 1.2em;
+            margin: 10px 0 0;
         }
         section {
             background: white;
-            margin: 25px 0;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         h2 {
             color: #ff8c00;
-            font-size: 2em;
-            border-bottom: 3px solid #ffbf00;
-            padding-bottom: 8px;
+            font-size: 1.8em;
             margin-bottom: 15px;
+            border-bottom: 2px solid #ffbf00;
+            padding-bottom: 5px;
+        }
+        p {
+            font-size: 1.1em;
+            margin: 10px 0;
         }
         ul {
-            list-style-type: square;
-            padding-left: 25px;
-        }
-        code {
-            background: #f2f2f2;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            color: #d9534f;
+            list-style-type: disc;
+            padding-left: 20px;
+            font-size: 1.1em;
         }
         .highlight {
             background: #fff7e6;
             padding: 15px;
-            border-left: 5px solid #ff8c00;
+            border-left: 4px solid #ff8c00;
             margin: 15px 0;
             border-radius: 5px;
             font-size: 1.1em;
+            font-weight: bold;
         }
-        .note {
+        .fun-fact {
             font-style: italic;
             color: #666;
-            margin-top: 10px;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-        .table th, .table td {
+            margin: 10px 0;
             padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        .table th {
-            background: #ffbf00;
-            color: white;
+            background: #f9f9f9;
+            border-radius: 5px;
         }
         footer {
             text-align: center;
-            padding: 25px;
-            font-size: 0.95em;
-            color: #888;
+            padding: 20px;
+            font-size: 0.9em;
+            color: #777;
             background: #f4f4f4;
             border-top: 1px solid #ddd;
         }
         @media (max-width: 768px) {
             header h1 {
-                font-size: 2.2em;
+                font-size: 2em;
             }
             header p {
-                font-size: 1.2em;
+                font-size: 1em;
             }
             h2 {
                 font-size: 1.6em;
             }
-            nav a {
-                margin: 0 10px;
-                font-size: 1em;
-            }
             .container {
                 padding: 15px;
-            }
-            .table th, .table td {
-                font-size: 0.9em;
-                padding: 8px;
-            }
-        }
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.8em;
-            }
-            header p {
-                font-size: 1em;
-            }
-            h2 {
-                font-size: 1.4em;
-            }
-            nav a {
-                display: block;
-                margin: 5px 0;
             }
             section {
                 padding: 15px;
             }
-            .table {
-                font-size: 0.85em;
+        }
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.6em;
+            }
+            header p {
+                font-size: 0.9em;
+            }
+            h2 {
+                font-size: 1.4em;
+            }
+            p, ul, .highlight {
+                font-size: 1em;
             }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="#intro">Introduction</a>
-        <a href="#specs">Specifications</a>
-        <a href="#rules">Rules</a>
-        <a href="#functions">Functions</a>
-        <a href="#shibarium">Shibarium</a>
-        <a href="#security">Security</a>
-        <a href="#conclusion">Conclusion</a>
-    </nav>
-
     <header>
-        <h1>CheeseToken Whitepaper</h1>
-        <p>A Deflationary Catch Game on Shibarium</p>
+        <h1>CheeseToken</h1>
+        <p>Catch, Win, and Watch It Shrink on Shibarium!</p>
     </header>
 
     <div class="container">
-        <section id="intro">
-            <h2>Introduction</h2>
+        <section>
+            <h2>Welcome to CheeseToken!</h2>
             <p>
-                CheeseToken (CHEESE) is a gamified ERC20 token on the Shibarium blockchain, blending tokenomics with a unique "catch" mechanic. Players can steal tokens from others while contributing to a deflationary supply through burning. Built for the Shiba Inu ecosystem, CheeseToken leverages Shibarium's 5-second block time and BONE as the native gas token to deliver a fast, engaging experience. This whitepaper outlines the token's mechanics and rules.
+                Imagine a game where you can "catch" tokens from others, win some for yourself, and make the total pile of tokens a little smaller each time. That’s CheeseToken (CHEESE)! It’s a fun, playful token on the Shibarium blockchain—a super-fast network where every move happens in just 5 seconds, and you use BONE to pay for gas. Ready to dive into the cheese chase? Let’s break it down!
             </p>
             <div class="highlight">
-                <strong>Contract Address:</strong> <code>0xb0Ea6B6aB210d6eeCd248E2E9274aeD01037437b</code>
+                Our Home: <strong>0xb0Ea6B6aB210d6eeCd248E2E9274aeD01037437b</strong>
             </div>
         </section>
 
-        <section id="specs">
-            <h2>Token Specifications</h2>
+        <section>
+            <h2>What Is CheeseToken?</h2>
+            <p>
+                CheeseToken is like a big wheel of digital cheese—1 quadrillion pieces to start with! It’s built on Shibarium, a speedy blockchain tied to the Shiba Inu family. You can trade it, hold it, or play our special "catch" game to snag some from others. Every catch makes the total amount of CHEESE shrink a bit, so it gets rarer over time.
+            </p>
             <ul>
                 <li><strong>Name:</strong> Cheese</li>
                 <li><strong>Symbol:</strong> CHEESE</li>
-                <li><strong>Decimals:</strong> 18</li>
-                <li><strong>Total Supply:</strong> 1,000,000,000,000,000 CHEESE (1 quadrillion, subject to reduction via burns)</li>
-                <li><strong>Initial Distribution:</strong> Minted to the deployer.</li>
-                <li><strong>Blockchain:</strong> Shibarium</li>
-                <li><strong>Block Time:</strong> 5 seconds</li>
-                <li><strong>Native Currency:</strong> BONE</li>
+                <li><strong>Starting Amount:</strong> 1,000,000,000,000,000 CHEESE</li>
+                <li><strong>Home Network:</strong> Shibarium (5 seconds per move!)</li>
+                <li><strong>Gas Money:</strong> BONE</li>
             </ul>
         </section>
 
-        <section id="rules">
-            <h2>Game Rules</h2>
-            <p>CheeseToken's core is a "catch" game with a deflationary twist. Below are the detailed rules:</p>
-
-            <h3>1. Roles</h3>
-            <p>Roles are determined by the <code>NoneToken</code> contract at <code>0x64E19b6a167878d2483d166212A3c2c68b1eB842</code>:</p>
-            <ul>
-                <li><strong>Dog:</strong> <code>noneToken.isNode(address) == true</code></li>
-                <li><strong>Cat:</strong> <code>noneToken.isNode(address) == false</code> and <code>noneToken.hasPaidBone(address) == true</code></li>
-                <li><strong>Rat:</strong> Neither condition met</li>
-                <li><strong>Query:</strong> <code>getRole(address)</code> returns "Dog", "Cat", or "Rat"</li>
-            </ul>
-            <p class="note">Roles update dynamically via <code>NoneToken</code>.</p>
-
-            <h3>2. Catching Mechanism</h3>
-            <ul>
-                <li><strong>Trigger:</strong> Transfer 1 CHEESE (<code>1 * 10^18 wei</code>) via <code>transfer(address to, uint256 amount)</code>.</li>
-                <li><strong>Cost:</strong> Catcher pays 1 CHEESE.</li>
-                <li><strong>Steal Amount:</strong> 1% of target's balance (<code>_balances[target] / 100</code>).</li>
-                <li><strong>Catcher Reward:</strong> 0.7% of target's balance (70% of stolen amount).</li>
-                <li><strong>Burn Amount:</strong> 0.3% of target's balance (30% of stolen amount, burned to reduce total supply).</li>
-                <li><strong>Minimum Steal:</strong> Stolen amount must be ≥ 1 wei (target balance ≥ 100 wei).</li>
-            </ul>
-
-            <h3>3. Catching Conditions</h3>
-            <ul>
-                <li><strong>Game Status:</strong> <code>isGameActive == true</code>, owner-controlled.</li>
-                <li><strong>Catcher Cooldown:</strong> 20 hours (72,000 seconds) between catches, tracked by <code>lastCatchTime[catcher]</code>.</li>
-                <li><strong>No Target Cooldown:</strong> Targets can be caught repeatedly.</li>
-                <li><strong>Catcher Eligibility:</strong> Dogs and Cats only.</li>
-                <li><strong>Target Restrictions:</strong>
-                    <ul>
-                        <li>Not a Dog (<code>noneToken.isNode(target) == false</code>).</li>
-                        <li>Not whitelisted (<code>whitelist[target] == false</code>).</li>
-                        <li>If catcher is a Cat, target must not be a Cat.</li>
-                    </ul>
-                </li>
-            </ul>
-
-            <h3>4. Catch Execution</h3>
-            <table class="table">
-                <tr><th>Step</th><th>Action</th></tr>
-                <tr><td>1</td><td>Catcher transfers 1 CHEESE to target.</td></tr>
-                <tr><td>2</td><td>Target loses 1% of its balance.</td></tr>
-                <tr><td>3</td><td>Catcher receives 0.7% of target's balance.</td></tr>
-                <tr><td>4</td><td>0.3% of target's balance is burned, reducing <code>_totalSupply</code>.</td></tr>
-                <tr><td>5</td><td>Catcher cooldown updates.</td></tr>
-                <tr><td>6</td><td>Catch logged in <code>catchRecords[target]</code>.</td></tr>
-            </table>
-
-            <h3>5. Whitelist</h3>
-            <ul>
-                <li><strong>Purpose:</strong> Prevents catching.</li>
-                <li><strong>Management:</strong> Owner uses <code>addToWhitelist(address)</code> and <code>removeFromWhitelist(address)</code>.</li>
-            </ul>
-
-            <h3>6. Catch Records</h3>
-            <ul>
-                <li><strong>Storage:</strong> <code>catchRecords[target]</code>.</li>
-                <li><strong>Structure:</strong> <code>catcher</code>, <code>amount</code> (catcher reward), <code>timestamp</code>.</li>
-                <li><strong>Query:</strong>
-                    <ul>
-                        <li><code>getCatchRecords(address target, uint256 page, uint256 pageSize)</code></li>
-                        <li><code>getCatchRecordsCount(address target)</code></li>
-                    </ul>
-                </li>
-            </ul>
-
-            <h3>7. Game Control</h3>
-            <ul>
-                <li><strong>Owner Functions:</strong>
-                    <ul>
-                        <li><code>stopGame()</code>: <code>isGameActive = false</code></li>
-                        <li><code>startGame()</code>: <code>isGameActive = true</code></li>
-                        <li><code>renounceOwnership()</code>: <code>owner = 0x0</code></li>
-                    </ul>
-                </li>
-                <li><strong>Default:</strong> Game starts active.</li>
-            </ul>
-        </section>
-
-        <section id="functions">
-            <h2>Token Functions</h2>
-            <ul>
-                <li><code>transfer(address to, uint256 amount)</code>: Transfers tokens; triggers catch if <code>amount == 1 * 10^18</code>.</li>
-                <li><code>approve(address spender, uint256 amount)</code></li>
-                <li><code>transferFrom(address from, address to, uint256 amount)</code>: No catching.</li>
-                <li><code>increaseAllowance(address spender, uint256 addedValue)</code></li>
-                <li><code>decreaseAllowance(address spender, uint256 subtractedValue)</code></li>
-                <li><code>balanceOf(address account)</code></li>
-                <li><code>allowance(address owner, address spender)</code></li>
-            </ul>
-        </section>
-
-        <section id="shibarium">
-            <h2>Shibarium Integration</h2>
-            <ul>
-                <li><strong>Speed:</strong> 5-second blocks for fast catches.</li>
-                <li><strong>Gas:</strong> BONE as native currency.</li>
-                <li><strong>Ecosystem:</strong> Integrates with Shiba Inu via <code>NoneToken</code>.</li>
-            </ul>
-        </section>
-
-        <section id="security">
-            <h2>Security and Design</h2>
-            <ul>
-                <li><strong>Solidity:</strong> <code>^0.8.0</code> with overflow protection.</li>
-                <li><strong>Deflationary:</strong> 0.3% burn per catch reduces supply.</li>
-                <li><strong>Dynamic Roles:</strong> Real-time via <code>NoneToken</code>.</li>
-                <li><strong>Balance:</strong> 20-hour catcher cooldown, no target cooldown.</li>
-            </ul>
-        </section>
-
-        <section id="conclusion">
-            <h2>Conclusion</h2>
+        <section>
+            <h2>How the Game Works</h2>
             <p>
-                CheeseToken redefines gamified tokens on Shibarium with its catch mechanic and deflationary burn. Powered by fast blocks and BONE, it offers a thrilling, rewarding experience. Join the chase, catch CHEESE, and watch the supply shrink!
+                The fun part of CheeseToken is the "catch" game. You can try to grab some CHEESE from others, but there are rules to keep it fair and exciting. Here’s how it all works:
+            </p>
+
+            <h3>Who’s Who in the Game</h3>
+            <p>
+                There are three types of players, based on another token called NoneToken:
+            </p>
+            <ul>
+                <li><strong>Dogs:</strong> The big players in the Shiba Inu world.</li>
+                <li><strong>Cats:</strong> Those who’ve paid some BONE to join the fun.</li>
+                <li><strong>Rats:</strong> Everyone else just holding CHEESE.</li>
+            </ul>
+            <p class="fun-fact">Fun Fact: Your role can change if you step up in the Shiba Inu ecosystem!</p>
+
+            <h3>How to Catch CHEESE</h3>
+            <p>
+                Want to catch some CHEESE? Here’s the deal:
+            </p>
+            <ul>
+                <li><strong>Step 1:</strong> Send exactly 1 CHEESE to someone’s wallet.</li>
+                <li><strong>What Happens:</strong> You take 1% of their CHEESE stash!</li>
+                <li><strong>You Get:</strong> 0.7% of their stash goes to you.</li>
+                <li><strong>The Twist:</strong> 0.3% gets burned—poof, gone forever!</li>
+                <li><strong>Catch Limit:</strong> You can only catch once every 20 hours.</li>
+            </ul>
+            <p>
+                Example: If they have 1,000 CHEESE, you send 1, take 10 (1%), keep 7 (0.7%), and 3 (0.3%) disappear. Cool, right?
+            </p>
+
+            <h3>Game Rules to Know</h3>
+            <ul>
+                <li><strong>Who Can Catch:</strong> Only Dogs and Cats can play the catching game.</li>
+                <li><strong>Who Can’t Be Caught:</strong> Dogs and special "protected" wallets (on a whitelist) are safe.</li>
+                <li><strong>Cat Rule:</strong> Cats can only catch Rats, not other Cats.</li>
+                <li><strong>No Rest for Targets:</strong> If you’re a target, you can be caught over and over—no breaks!</li>
+                <li><strong>Minimum Catch:</strong> Targets need at least 100 tiny CHEESE bits (0.0000000000000001 CHEESE) to be worth catching.</li>
+            </ul>
+
+            <h3>Why the Burn?</h3>
+            <p>
+                Every time someone catches, 0.3% of the snatched CHEESE gets burned. This means the total amount of CHEESE out there shrinks a little each time. Over time, CHEESE could become harder to find—and maybe more valuable!
+            </p>
+        </section>
+
+        <section>
+            <h2>Keeping It Safe</h2>
+            <p>
+                We’ve got a special list called the "whitelist" to protect certain wallets—like pools or important players—from being caught. Only the token creator can add or remove wallets from this list. They can also pause or start the game anytime, but once they give up control, it’s game on forever!
+            </p>
+            <div class="highlight">
+                Catchers wait 20 hours, but targets? No rest—watch your cheese!
+            </div>
+        </section>
+
+        <section>
+            <h2>Tracking the Fun</h2>
+            <p>
+                Every catch gets logged—like a trophy wall! You can see who caught what, how much they got, and when it happened. It’s all stored on Shibarium, so the history is there for everyone to check out.
+            </p>
+        </section>
+
+        <section>
+            <h2>Why Shibarium?</h2>
+            <p>
+                Shibarium is super fast—every move takes just 5 seconds! Plus, it uses BONE, the Shiba Inu family’s favorite coin, to keep things running. It’s the perfect playground for CheeseToken’s quick catches and playful vibes.
+            </p>
+        </section>
+
+        <section>
+            <h2>Join the Cheese Chase!</h2>
+            <p>
+                CheeseToken is all about fun, strategy, and a little mischief. Catch some CHEESE, watch it shrink, and enjoy the ride on Shibarium. Whether you’re a Dog, Cat, or Rat, there’s a spot for you in this cheesy adventure. Start catching today!
             </p>
         </section>
     </div>
 
     <footer>
-        <p>© 2025 CheeseToken Team on Shibarium. All rights reserved.</p>
+        <p>© 2025 CheeseToken Team on Shibarium. Let’s Catch Some Fun!</p>
     </footer>
 </body>
 </html>
