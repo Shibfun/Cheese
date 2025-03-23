@@ -99,21 +99,55 @@
             {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"whitelist","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
         ];
 
-        // Initialize Web3 and Contract
+        // Initialize Web3 and Contract with better error handling
         let web3;
         let contract;
-        try {
-            web3 = new Web3(networkDetails.rpcUrl);
-            contract = new web3.eth.Contract(contractAbi, contractAddress);
-        } catch (error) {
-            document.getElementById("result").innerText = `Failed to initialize Web3 or contract: ${error.message}`;
-            throw error; // Stop execution if initialization fails
+        async function initializeWeb3AndContract() {
+            try {
+                // Check if Web3 is loaded
+                if (typeof Web3 === "undefined") {
+                    throw new Error("Web3.js library failed to load. Please ensure the script is loaded correctly.");
+                }
+
+                // Initialize Web3 with Shibarium RPC
+                web3 = new Web3(networkDetails.rpcUrl);
+
+                // Test RPC connection by fetching the chain ID
+                const chainId = await web3.eth.getChainId();
+                if (chainId !== networkDetails.chainId) {
+                    throw new Error(`RPC is not connected to Shibarium (Chain ID ${networkDetails.chainId}). Got Chain ID: ${chainId}`);
+                }
+
+                // Initialize the contract
+                contract = new web3.eth.Contract(contractAbi, contractAddress);
+
+                // Test if the contract is accessible by calling a simple method
+                await contract.methods.name().call();
+                return true;
+            } catch (error) {
+                document.getElementById("result").innerText = `Initialization Failed: ${error.message}\nPlease check the RPC URL (${networkDetails.rpcUrl}) and contract address (${contractAddress}).`;
+                return false;
+            }
         }
+
+        // Call initialization on page load
+        window.onload = async () => {
+            const initialized = await initializeWeb3AndContract();
+            if (!initialized) {
+                document.querySelector("button").disabled = true; // Disable query button if initialization fails
+            }
+        };
 
         async function queryWallet() {
             const address = document.getElementById("walletAddress").value.trim();
             if (!web3.utils.isAddress(address)) {
                 document.getElementById("result").innerText = "Please enter a valid wallet address!";
+                return;
+            }
+
+            // Double-check if contract is initialized
+            if (!contract || !contract.methods) {
+                document.getElementById("result").innerText = "Contract is not initialized. Please check the initialization error above.";
                 return;
             }
 
@@ -174,7 +208,7 @@ Contract Status:
 
                 document.getElementById("result").innerText = resultText;
             } catch (error) {
-                document.getElementById("result").innerText = `Query Failed: ${error.message}`;
+                document.getElementById("result").innerText = `Query Failed: ${error.message}\nPlease ensure the contract is deployed and the RPC is accessible.`;
             }
         }
     </script>
