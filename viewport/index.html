@@ -107,6 +107,11 @@
             color: #D32F2F;
             font-weight: bold;
         }
+        #countdown {
+            font-weight: bold;
+            color: #FF9800;
+            margin-top: 10px;
+        }
 
         /* Mobile Responsiveness */
         @media (max-width: 600px) {
@@ -169,6 +174,7 @@
 
         // Contract Details
         const rawContractAddress = "0xb0ea6b6ab210d6eecd248e2e9274aed01037437b";
+        const CATCH_COOLDOWN = 72000; // 72,000 seconds (20 hours)
         let contractAddress;
 
         const contractAbi = [
@@ -210,6 +216,7 @@
         let web3;
         let contract;
         let activeRpcUrl;
+        let countdownInterval;
         async function initializeWeb3AndContract() {
             try {
                 // Check if Web3 is loaded
@@ -267,6 +274,52 @@
             }
         };
 
+        // Function to format the countdown time
+        function formatCountdown(seconds) {
+            if (seconds <= 0) return "Ready to catch! 🧀";
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${hours} hours, ${minutes} minutes, ${secs} seconds remaining`;
+        }
+
+        // Function to start the countdown timer
+        function startCountdown(lastCatchTimestamp) {
+            // Clear any existing interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            // If lastCatchTimestamp is 0, the wallet has never caught
+            if (lastCatchTimestamp == 0) {
+                document.getElementById("countdown").innerText = "Ready to catch! 🧀";
+                return;
+            }
+
+            // Calculate the time when the next catch is allowed
+            const nextCatchTime = (parseInt(lastCatchTimestamp) + CATCH_COOLDOWN) * 1000; // Convert to milliseconds
+            const now = Date.now();
+
+            // If the cooldown has already passed, show "Ready to catch!"
+            if (now >= nextCatchTime) {
+                document.getElementById("countdown").innerText = "Ready to catch! 🧀";
+                return;
+            }
+
+            // Update the countdown every second
+            countdownInterval = setInterval(() => {
+                const currentTime = Date.now();
+                const secondsRemaining = Math.max(0, Math.floor((nextCatchTime - currentTime) / 1000));
+                document.getElementById("countdown").innerText = formatCountdown(secondsRemaining);
+
+                // Stop the interval when the countdown reaches 0
+                if (secondsRemaining <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("countdown").innerText = "Ready to catch! 🧀";
+                }
+            }, 1000);
+        }
+
         async function queryWallet() {
             const address = document.getElementById("walletAddress").value.trim();
             if (!web3.utils.isAddress(address)) {
@@ -290,7 +343,6 @@
                 const isWhitelisted = await contract.methods.whitelist(address).call();
                 const catchRecordsCount = await contract.methods.getCatchRecordsCount(address).call();
                 const isGameActive = await contract.methods.isGameActive().call();
-                const owner = await contract.methods.owner().call();
                 const totalSupply = await contract.methods.totalSupply().call();
 
                 // Query catch records (pagination, 10 per page)
@@ -301,8 +353,8 @@
                     catchRecordsHtml = '<ul>';
                     records.forEach((record, index) => {
                         const amountEther = web3.utils.fromWei(record.amount, "ether");
-                        const time = new Date(record.timestamp * 1000).toLocaleString();
-                        catchRecordsHtml += `<li>${index + 1}. Caught by ${record.catcher}, Amount: ${amountEther} CHEESE, Time: ${time}</li>`;
+                        // Avoid showing the timestamp in catch records
+                        catchRecordsHtml += `<li>${index + 1}. Caught by ${record.catcher}, Amount: ${amountEther} CHEESE</li>`;
                     });
                     catchRecordsHtml += '</ul>';
                     if (catchRecordsCount > pageSize) {
@@ -315,7 +367,6 @@
                 // Format the result
                 const balanceEther = web3.utils.fromWei(balance, "ether");
                 const totalSupplyEther = web3.utils.fromWei(totalSupply, "ether");
-                const lastCatchTime = lastCatch > 0 ? new Date(lastCatch * 1000).toLocaleString() : "Never caught";
                 const resultHtml = `
                     <div class="section">
                         <h3>Network Information</h3>
@@ -332,7 +383,7 @@
                         <p><strong>CHEESE Balance:</strong> ${balanceEther} CHEESE</p>
                         <p><strong>Role:</strong> ${role}</p>
                         <p><strong>Whitelisted:</strong> ${isWhitelisted ? "Yes" : "No"}</p>
-                        <p><strong>Last Catch Time:</strong> ${lastCatchTime}</p>
+                        <p><strong>Time Until Next Catch:</strong> <span id="countdown"></span></p>
                         <p><strong>Total Catch Records:</strong> ${catchRecordsCount}</p>
                     </div>
                     <div class="section">
@@ -342,12 +393,14 @@
                     <div class="section">
                         <h3>Contract Status</h3>
                         <p><strong>Game Active:</strong> ${isGameActive ? "Yes" : "No"}</p>
-                        <p><strong>Contract Owner:</strong> ${owner}</p>
                         <p><strong>Total Supply:</strong> ${totalSupplyEther} CHEESE</p>
                     </div>
                 `;
 
                 document.getElementById("result").innerHTML = resultHtml;
+
+                // Start the countdown timer
+                startCountdown(lastCatch);
             } catch (error) {
                 document.getElementById("result").innerHTML = `<div class="error">Query Failed: ${error.message}</div><p>Please ensure the contract is deployed and the RPC is accessible.</p>`;
             }
