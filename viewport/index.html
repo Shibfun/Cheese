@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheeseToken Query Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 8px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>CheeseToken Query Tool (Shibarium)</h2>
+        <p>Enter a wallet address to query related information:</p>
+        <input type="text" id="walletAddress" placeholder="Enter wallet address, e.g., 0x...">
+        <button onclick="queryWallet()">Query</button>
+        <div id="result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script>
+        const rpcUrl = "https://www.shibrpc.com";
+        const contractAddress = "0xb0Ea6B6aAB210d6eeCd248E2E9274aeD01037437b";
+        const web3 = new Web3(rpcUrl);
+
+        const contractAbi = [
+            {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Burned","type":"event"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"catcher","type":"address"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Caught","type":"event"},
+            {"anonymous":false,"inputs":[],"name":"GameStarted","type":"event"},
+            {"anonymous":false,"inputs":[],"name":"GameStopped","type":"event"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"}],"name":"OwnershipRenounced","type":"event"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"bool","name":"added","type":"bool"}],"name":"WhitelistUpdated","type":"event"},
+            {"inputs":[{"internalType":"address","name":"target","type":"address"}],"name":"addToWhitelist","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"page","type":"uint256"},{"internalType":"uint256","name":"pageSize","type":"uint256"}],"name":"getCatchRecords","outputs":[{"components":[{"internalType":"address","name":"catcher","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct CheeseToken.CatchRecord[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"target","type":"address"}],"name":"getCatchRecordsCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getRole","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[],"name":"isGameActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"lastCatchTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"target","type":"address"}],"name":"removeFromWhitelist","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[],"name":"startGame","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[],"name":"stopGame","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"whitelist","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
+        ];
+
+        const contract = new web3.eth.Contract(contractAbi, contractAddress);
+
+        async function queryWallet() {
+            const address = document.getElementById("walletAddress").value.trim();
+            if (!web3.utils.isAddress(address)) {
+                document.getElementById("result").innerText = "Please enter a valid wallet address!";
+                return;
+            }
+
+            document.getElementById("result").innerText = "Querying, please wait...";
+
+            try {
+                // Query all public information
+                const balance = await contract.methods.balanceOf(address).call();
+                const role = await contract.methods.getRole(address).call();
+                const lastCatch = await contract.methods.lastCatchTime(address).call();
+                const isWhitelisted = await contract.methods.whitelist(address).call();
+                const catchRecordsCount = await contract.methods.getCatchRecordsCount(address).call();
+                const isGameActive = await contract.methods.isGameActive().call();
+                const owner = await contract.methods.owner().call();
+                const totalSupply = await contract.methods.totalSupply().call();
+
+                // Query catch records (pagination, 10 per page)
+                let catchRecordsText = "Catch Records:\n";
+                if (catchRecordsCount > 0) {
+                    const pageSize = 10;
+                    const records = await contract.methods.getCatchRecords(address, 0, pageSize).call();
+                    records.forEach((record, index) => {
+                        const amountEther = web3.utils.fromWei(record.amount, "ether");
+                        const time = new Date(record.timestamp * 1000).toLocaleString();
+                        catchRecordsText += `  ${index + 1}. Caught by ${record.catcher}, Amount: ${amountEther} CHEESE, Time: ${time}\n`;
+                    });
+                    if (catchRecordsCount > pageSize) {
+                        catchRecordsText += `  (Total ${catchRecordsCount} records, showing first ${pageSize} only)\n`;
+                    }
+                } else {
+                    catchRecordsText += "  No catch records\n";
+                }
+
+                // Format the result
+                const balanceEther = web3.utils.fromWei(balance, "ether");
+                const totalSupplyEther = web3.utils.fromWei(totalSupply, "ether");
+                const lastCatchTime = lastCatch > 0 ? new Date(lastCatch * 1000).toLocaleString() : "Never caught";
+                const resultText = `
+Basic Information:
+- Wallet Address: ${address}
+- CHEESE Balance: ${balanceEther} CHEESE
+- Role: ${role}
+- Whitelisted: ${isWhitelisted ? "Yes" : "No"}
+- Last Catch Time: ${lastCatchTime}
+- Total Catch Records: ${catchRecordsCount}
+${catchRecordsText}
+Contract Status:
+- Game Active: ${isGameActive ? "Yes" : "No"}
+- Contract Owner: ${owner}
+- Total Supply: ${totalSupplyEther} CHEESE
+                `;
+
+                document.getElementById("result").innerText = resultText;
+            } catch (error) {
+                document.getElementById("result").innerText = `Query Failed: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
