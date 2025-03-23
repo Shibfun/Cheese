@@ -58,7 +58,9 @@
             name: "Shibarium",
             rpcUrls: [
                 "https://www.shibrpc.com",
-                "https://rpc.shibrpc.com" // Fallback RPC
+                "https://rpc.shibrpc.com",
+                "https://shibarium-rpc.publicnode.com",
+                "https://rpc.shibariumchain.com" // Additional fallback RPC
             ],
             chainId: 109,
             currencySymbol: "BONE",
@@ -66,7 +68,7 @@
         };
 
         // Contract Details
-        const rawContractAddress = "0xb0Ea6B6aAB210d6eeCd248E2E9274aeD01037437b";
+        const rawContractAddress = "0xb0ea6b6ab210d6eecd248e2e9274aed01037437b";
         let contractAddress;
 
         const contractAbi = [
@@ -107,6 +109,7 @@
         // Initialize Web3 and Contract with better error handling
         let web3;
         let contract;
+        let activeRpcUrl;
         async function initializeWeb3AndContract() {
             try {
                 // Check if Web3 is loaded
@@ -114,7 +117,7 @@
                     throw new Error("Web3.js library failed to load. Please ensure the script is loaded correctly.");
                 }
 
-                // Validate and checksum the contract address
+                // Convert the raw contract address to its checksummed form
                 try {
                     contractAddress = Web3.utils.toChecksumAddress(rawContractAddress);
                 } catch (error) {
@@ -122,16 +125,15 @@
                 }
 
                 // Try each RPC URL until one works
-                let rpcUrl;
                 for (let i = 0; i < networkDetails.rpcUrls.length; i++) {
-                    rpcUrl = networkDetails.rpcUrls[i];
+                    activeRpcUrl = networkDetails.rpcUrls[i];
                     try {
-                        web3 = new Web3(rpcUrl);
+                        web3 = new Web3(activeRpcUrl);
                         const chainId = await web3.eth.getChainId();
                         if (chainId === networkDetails.chainId) {
                             break; // Success, use this RPC
                         } else {
-                            throw new Error(`RPC ${rpcUrl} is not connected to Shibarium (Chain ID ${networkDetails.chainId}). Got Chain ID: ${chainId}`);
+                            throw new Error(`RPC ${activeRpcUrl} is not connected to Shibarium (Chain ID ${networkDetails.chainId}). Got Chain ID: ${chainId}`);
                         }
                     } catch (error) {
                         if (i === networkDetails.rpcUrls.length - 1) {
@@ -152,7 +154,7 @@
 
                 return true;
             } catch (error) {
-                document.getElementById("result").innerText = `Initialization Failed: ${error.message}\nPlease verify the contract address and RPC URLs:\n${networkDetails.rpcUrls.join("\n")}`;
+                document.getElementById("result").innerText = `Initialization Failed: ${error.message}\nPlease verify the contract address and RPC URLs:\n${networkDetails.rpcUrls.join("\n")}\nCheck the contract on Shibarium Scan: ${networkDetails.blockExplorer}/address/${contractAddress}`;
                 return false;
             }
         }
@@ -218,6 +220,7 @@ Chain ID: ${networkDetails.chainId}
 Currency: ${networkDetails.currencySymbol}
 Block Explorer: ${networkDetails.blockExplorer}
 Contract Address: ${contractAddress}
+Active RPC: ${activeRpcUrl}
 
 Basic Information:
 - Wallet Address: ${address}
