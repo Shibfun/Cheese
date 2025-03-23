@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheeseToken Whitepaper - Shibarium</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(90deg, #ff8c00, #ffbf00);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            border-radius: 0 0 25px 25px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        header p {
+            font-size: 1.3em;
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
+        section {
+            background: white;
+            margin: 25px 0;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #ff8c00;
+            font-size: 2em;
+            border-bottom: 3px solid #ffbf00;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        ul {
+            list-style-type: square;
+            padding-left: 25px;
+        }
+        code {
+            background: #f2f2f2;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #d9534f;
+        }
+        .highlight {
+            background: #fff7e6;
+            padding: 15px;
+            border-left: 5px solid #ff8c00;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+        .note {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+        footer {
+            text-align: center;
+            padding: 25px;
+            font-size: 0.95em;
+            color: #888;
+            background: #f4f4f4;
+            border-top: 1px solid #ddd;
+        }
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            header p {
+                font-size: 1.1em;
+            }
+            h2 {
+                font-size: 1.6em;
+            }
+            .container {
+                padding: 15px;
+            }
+            section {
+                padding: 20px;
+                margin: 15px 0;
+            }
+            .highlight {
+                font-size: 1em;
+            }
+        }
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.6em;
+            }
+            header p {
+                font-size: 0.9em;
+            }
+            h2 {
+                font-size: 1.4em;
+            }
+            section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CheeseToken Whitepaper</h1>
+        <p>A Gamified Token on Shibarium</p>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2>Introduction</h2>
+            <p>
+                CheeseToken (CHEESE) is a unique ERC20 token deployed on the Shibarium blockchain, designed to bring an exciting "catch" game to the Shiba Inu ecosystem. Leveraging Shibarium's fast 5-second block time and BONE as the native gas token, CheeseToken introduces a decentralized, gamified experience where players can steal tokens from each other by transferring a fixed amount of CHEESE. This whitepaper details the token's specifications, rules, and mechanics.
+            </p>
+            <div class="highlight">
+                <strong>Contract Address:</strong> <code>0xB7c117a80821eb303958518B2514f4bB9aDAC51C</code>
+            </div>
+        </section>
+
+        <section>
+            <h2>Token Specifications</h2>
+            <ul>
+                <li><strong>Name:</strong> Cheese</li>
+                <li><strong>Symbol:</strong> CHEESE</li>
+                <li><strong>Decimals:</strong> 18</li>
+                <li><strong>Total Supply:</strong> 1,000,000,000,000,000 CHEESE (1 quadrillion)</li>
+                <li><strong>Initial Distribution:</strong> All tokens are minted to the deployer upon deployment.</li>
+                <li><strong>Blockchain:</strong> Shibarium</li>
+                <li><strong>Block Time:</strong> 5 seconds</li>
+                <li><strong>Native Currency:</strong> BONE</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Game Rules</h2>
+            <p>CheeseToken's core feature is a "catch" game where players can steal tokens from others. Below are the specific rules governing this mechanic:</p>
+
+            <h3>1. Roles</h3>
+            <p>Roles are assigned based on the <code>NoneToken</code> contract at <code>0x64E19b6a167878d2483d166212A3c2c68b1eB842</code>:</p>
+            <ul>
+                <li><strong>Dog:</strong> Address where <code>noneToken.isNode(address) == true</code>.</li>
+                <li><strong>Cat:</strong> Address where <code>noneToken.isNode(address) == false</code> and <code>noneToken.hasPaidBone(address) == true</code>.</li>
+                <li><strong>Rat:</strong> Address where neither condition is met.</li>
+                <li><strong>Query:</strong> Use <code>getRole(address)</code> to retrieve an address's role ("Dog", "Cat", or "Rat").</li>
+            </ul>
+            <p class="note">Note: Role status is dynamic and updated in real-time via <code>NoneToken</code>.</p>
+
+            <h3>2. Catching Mechanism</h3>
+            <ul>
+                <li><strong>Trigger:</strong> Transfer exactly 1 CHEESE (<code>1 * 10^18 wei</code>) to a target address using <code>transfer(address to, uint256 amount)</code>.</li>
+                <li><strong>Cost:</strong> Catcher pays 1 CHEESE, requiring a minimum balance of 1 CHEESE.</li>
+                <li><strong>Reward:</strong> Catcher receives 1% of the target's balance (<code>_balances[target] / 100</code>).</li>
+                <li><strong>Minimum Reward:</strong> Reward must be at least 1 wei; targets with less than 100 wei cannot be caught.</li>
+            </ul>
+
+            <h3>3. Catching Conditions</h3>
+            <ul>
+                <li><strong>Game Status:</strong> Must be active (<code>isGameActive == true</code>), controlled by the owner.</li>
+                <li><strong>Catcher Cooldown:</strong> Catchers must wait 20 hours (72,000 seconds) between catches, tracked by <code>lastCatchTime[catcher]</code>.</li>
+                <li><strong>No Target Cooldown:</strong> Targets can be caught repeatedly with no delay.</li>
+                <li><strong>Catcher Eligibility:</strong> Only Dogs and Cats can catch; Rats are ineligible.</li>
+                <li><strong>Target Restrictions:</strong>
+                    <ul>
+                        <li>Must not be a Dog (<code>noneToken.isNode(target) == false</code>).</li>
+                        <li>Must not be whitelisted (<code>whitelist[target] == false</code>).</li>
+                        <li>If catcher is a Cat, target must not be a Cat (Cats can only catch Rats).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>4. Catch Execution</h3>
+            <ul>
+                <li>Catcher transfers 1 CHEESE to the target.</li>
+                <li>Target transfers 1% of its balance to the catcher.</li>
+                <li>Catcher's cooldown updates to <code>lastCatchTime[catcher] = block.timestamp</code>.</li>
+                <li>Catch is logged in <code>catchRecords[target]</code> with catcher address, amount, and timestamp.</li>
+            </ul>
+
+            <h3>5. Whitelist</h3>
+            <ul>
+                <li><strong>Purpose:</strong> Protects addresses from being caught.</li>
+                <li><strong>Management:</strong> Owner can add (<code>addToWhitelist(address)</code>) or remove (<code>removeFromWhitelist(address)</code>) addresses.</li>
+            </ul>
+
+            <h3>6. Catch Records</h3>
+            <ul>
+                <li><strong>Storage:</strong> Recorded in <code>catchRecords[target]</code>.</li>
+                <li><strong>Structure:</strong> Includes <code>catcher</code> (address), <code>amount</code> (uint256), <code>timestamp</code> (uint256).</li>
+                <li><strong>Query:</strong>
+                    <ul>
+                        <li><code>getCatchRecords(address target, uint256 page, uint256 pageSize)</code>: Retrieves paginated records.</li>
+                        <li><code>getCatchRecordsCount(address target)</code>: Returns total catch count for a target.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>7. Game Control</h3>
+            <ul>
+                <li><strong>Owner Functions:</strong>
+                    <ul>
+                        <li><code>stopGame()</code>: Disables catching (<code>isGameActive = false</code>).</li>
+                        <li><code>startGame()</code>: Enables catching (<code>isGameActive = true</code>).</li>
+                        <li><code>renounceOwnership()</code>: Sets <code>owner = 0x0</code>, permanently relinquishing control.</li>
+                    </ul>
+                </li>
+                <li><strong>Default:</strong> Game starts active.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Token Functions</h2>
+            <p>CheeseToken implements the ERC20 standard with the following key functions:</p>
+            <ul>
+                <li><code>transfer(address to, uint256 amount)</code>: Transfers tokens; triggers catching if <code>amount == 1 * 10^18</code>.</li>
+                <li><code>approve(address spender, uint256 amount)</code>: Approves a spender.</li>
+                <li><code>transferFrom(address from, address to, uint256 amount)</code>: Transfers on behalf of another (no catching).</li>
+                <li><code>increaseAllowance(address spender, uint256 addedValue)</code>: Increases allowance.</li>
+                <li><code>decreaseAllowance(address spender, uint256 subtractedValue)</code>: Decreases allowance.</li>
+                <li><code>balanceOf(address account)</code>: Returns balance.</li>
+                <li><code>allowance(address owner, address spender)</code>: Returns allowance.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Shibarium Integration</h2>
+            <ul>
+                <li><strong>Fast Transactions:</strong> Shibarium’s 5-second block time ensures quick catch confirmations.</li>
+                <li><strong>BONE Gas Fees:</strong> All transactions, including catches, use BONE as the native currency.</li>
+                <li><strong>Ecosystem Fit:</strong> Ties into the Shiba Inu ecosystem via <code>NoneToken</code> roles.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Security and Design</h2>
+            <ul>
+                <li><strong>Solidity:</strong> <code>^0.8.0</code> with overflow protection.</li>
+                <li><strong>Fixed Supply:</strong> No minting or burning; total supply is constant.</li>
+                <li><strong>Dynamic Roles:</strong> Real-time role checks via <code>NoneToken</code>.</li>
+                <li><strong>Game Balance:</strong> 20-hour catcher cooldown vs. no target cooldown encourages active play.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Conclusion</h2>
+            <p>
+                CheeseToken brings a fresh, gamified twist to the Shibarium blockchain, combining tokenomics with a thrilling catch mechanic. With fast transactions powered by Shibarium’s 5-second blocks and BONE as the fuel, players can enjoy a seamless and engaging experience. Dive into the Cheese chase and catch your share!
+            </p>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2025 CheeseToken Team on Shibarium. All rights reserved.</p>
+    </footer>
+</body>
+</html>
